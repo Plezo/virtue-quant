@@ -14,6 +14,7 @@ import os
 import shutil
 from tqdm import tqdm
 import multiprocessing as mp
+import numpy as np
 from itertools import product
 import pandas as pd
 import pickle
@@ -23,15 +24,17 @@ from packages import ta
 def add_TA(df):
     ta.add_ATR(df, inplace=True)
     ta.add_OBV(df, inplace=True)
+    # ta.add_RSI(df, inplace=True)
     return df
 
 def prepare_for_model(df, end_date, num_days):
     end_date = pd.to_datetime(end_date)
 
-    df.drop(columns={'High', 'Low', 'Volume'}, inplace=True)
-    df['Open'] = df['Open'].shift(-1)
-    df.rename(columns={'Open': 'Target', 'QuoteVolume': 'Volume'}, inplace=True)
-    df = df[df.index.year <= end_date.year].tail(num_days)
+    df.drop(columns={'High', 'Low', 'Volume', 'Open'}, inplace=True)
+    df['Target'] = df['Close'].shift(-1)
+    df.rename(columns={'QuoteVolume': 'Volume'}, inplace=True)
+    df = df[df.index < end_date].tail(num_days + 1)
+    df.loc[:, 'Target'][-1] = np.nan
 
     return df
 
