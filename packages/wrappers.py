@@ -30,5 +30,5 @@ def get_df_from_cryptowatch(exchange='kraken', pair='btcusd'):
 
     df = pd.DataFrame(data, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'QuoteVolume']).set_index('Date')
     df.index = pd.to_datetime(df.index, unit='s')
-    df.index = df.index.shift(-2, 'D') # For some reason the data shows 2 days ahead for what is today
+    df.index = df.index.shift(-1, 'D') # For some reason the data shows 1 day ahead for what is today (could be time zone thing)
     return df
