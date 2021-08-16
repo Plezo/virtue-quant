@@ -21,24 +21,108 @@ import pickle
 from sklearn.linear_model import LinearRegression
 from packages import ta
 
+def get_train_test(df):
+    """
+    Summary line.
+
+    Extended description of function.
+
+    Parameters
+    ----------
+    arg1 : int
+        Description of arg1
+    arg2 : str
+        Description of arg2
+
+    Returns
+    -------
+    int
+        Description of return value
+
+    """
+
+    Xtrain = df.loc[:, df.columns != 'Target'][:-1]
+    Xtest = df.loc[:, df.columns != 'Target'].iloc[[-1]]
+    ytrain = df[['Target']][:-1]
+    ytest = df[['Target']].iloc[[-1]]
+    return Xtrain, Xtest, ytrain, ytest
+
 def add_TA(df):
+    """
+    Summary line.
+
+    Extended description of function.
+
+    Parameters
+    ----------
+    arg1 : int
+        Description of arg1
+    arg2 : str
+        Description of arg2
+
+    Returns
+    -------
+    int
+        Description of return value
+
+    """
+
     ta.add_ATR(df, inplace=True)
     ta.add_OBV(df, inplace=True)
     # ta.add_RSI(df, inplace=True)
     return df
 
-def prepare_for_model(df, end_date, num_days):
+def prepare_for_model(df, end_date, num_days, target='Close'):
+    """
+    Summary line.
+
+    Extended description of function.
+
+    Parameters
+    ----------
+    arg1 : int
+        Description of arg1
+    arg2 : str
+        Description of arg2
+
+    Returns
+    -------
+    int
+        Description of return value
+
+    """
+
     end_date = pd.to_datetime(end_date)
+    prepped_df = df.copy()
 
-    df.drop(columns={'High', 'Low', 'Volume', 'Open'}, inplace=True)
-    df['Target'] = df['Close'].shift(-1)
-    df.rename(columns={'QuoteVolume': 'Volume'}, inplace=True)
-    df = df[df.index < end_date].tail(num_days + 1)
-    df.loc[:, 'Target'][-1] = np.nan
+    prepped_df.insert(0, 'Target', prepped_df[target.title()].shift(-1))
+    prepped_df = prepped_df.loc[:, [i for i in prepped_df.columns if i not in ['High', 'Low', 'Volume', 'Open']]]
+    prepped_df.rename(columns={'QuoteVolume': 'Volume'}, inplace=True)
+    prepped_df = prepped_df[prepped_df.index < end_date].tail(num_days + 1)
+    # df.loc[:, 'Target'][-1] = np.nan
 
-    return df
+    return prepped_df
 
 def generate_model(asset_name, df, end_date, num_days, force_overwrite=False):
+    """
+    Summary line.
+
+    Extended description of function.
+
+    Parameters
+    ----------
+    arg1 : int
+        Description of arg1
+    arg2 : str
+        Description of arg2
+
+    Returns
+    -------
+    int
+        Description of return value
+
+    """
+    
     parent_path = os.path.join('models', asset_name + '_' + end_date + "-linear-" + str(num_days))
 
     if os.path.isfile(os.path.join(parent_path, 'completed.txt')):
