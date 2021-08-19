@@ -38,7 +38,7 @@ def add_TA(df):
     # ta.add_RSI(df, inplace=True)
     return df
 
-def prepare_for_model(df, day_predicting, num_days, target='Close'):
+def prepare_for_model(df, day_predicting, num_days, features=['Close', 'Volume'], target='Close'):
     """Formats dataframe for model creation
 
     Args:
@@ -52,11 +52,12 @@ def prepare_for_model(df, day_predicting, num_days, target='Close'):
 
     """
 
+    features.insert(0, 'Target')
     day_predicting = pd.to_datetime(day_predicting)
     prepped_df = df.copy()
 
     prepped_df.insert(0, 'Target', prepped_df[target.title()].shift(-1))
-    prepped_df = prepped_df.loc[:, [i for i in prepped_df.columns if i not in ['High', 'Low', 'Volume', 'Open']]]
+    prepped_df = prepped_df.loc[:, [i for i in prepped_df.columns if i in features]]
     prepped_df.rename(columns={'QuoteVolume': 'Volume'}, inplace=True)
     prepped_df = prepped_df[prepped_df.index < day_predicting].tail(num_days + 1)
 
