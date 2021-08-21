@@ -1,13 +1,5 @@
 """
 Used to do all things related to models, from preparing the dataframe to generating models.
-
-TODO
-
---------------------------------------------------------------------------------------------------------------
-1. Implement Predictions function
-2. Consider switching to a log regression giving probability of profit 0-1
---------------------------------------------------------------------------------------------------------------
-
 """
 
 # import tensorflow as tf
@@ -45,6 +37,7 @@ def prepare_for_model(df, day_predicting, num_days, features=['Close', 'Volume']
         df: Dataframe to prepare
         day_predicting: The day we are predicting
         num_days: Number of days to train on
+        features (optional): Feature columns we want to train
         target (optional): The column used to determine the target values
 
     Returns:
