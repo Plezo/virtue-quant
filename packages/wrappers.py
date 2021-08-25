@@ -2,7 +2,6 @@
 cryptowatch:    https://docs.cryptowat.ch/rest-api/markets/ohlc
 coinapi:        https://docs.coinapi.io/#ohlcv
 alphavantage:   https://www.alphavantage.co/documentation/
-
 """
 
 import cryptowatch as cw
